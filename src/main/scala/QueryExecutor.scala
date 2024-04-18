@@ -56,7 +56,7 @@ object QueryExecutor {
 
         // Create query string
         val addQuotesUdf = udf(StringUtils.addQuotes)
-        val unifillDfSample = unifillDF.limit(100)
+        val unifillDfSample = unifillDF
                 .select(addQuotesUdf(col("mobile")).as("mobile"))
                 .collect().mkString(",").replaceAll("[\\[\\]]","")
         val queryString = query(unifillDfSample)
@@ -73,8 +73,8 @@ object QueryExecutor {
         rawDataframe.createOrReplaceTempView("raw_dataframe_view")
         val output1 = sparkSession.sql(getTransformationQuery1())
         val output2 = sparkSession.sql(getTransformationQuery2())
-        println("Address with one tenant: " + output1.count())
-        println("Address with greater than one tenant: " + output2.count())
+        println("Addresses with one tenant: " + output1.count())
+        println("Addresses with greater than one tenant: " + output2.count())
 
     }
 }
