@@ -35,8 +35,6 @@ object QueryExecutor {
         )
     }
 
-    val addQuotes = (inputString: String) => { "'" + inputString + "'" }
-
     def main(args: Array[String]): Unit = {
         log.info("=== Spark query executor ===")
         val unifillMobileNumbersFile = "/meesho/dm.csv"
@@ -48,7 +46,7 @@ object QueryExecutor {
 
         // Show dataframe unique mobile
         // unifillDF.show(false)
-
+        val addQuotes = (inputString: String) => { "'" + inputString + "'" }
         val addQuotesUdf = udf(addQuotes)
         val unifillDfSample = unifillDF.limit(100)
                 .select(addQuotesUdf(col("mobile")).as("mobile"))
