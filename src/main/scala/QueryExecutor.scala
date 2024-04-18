@@ -64,7 +64,7 @@ object QueryExecutor {
         //-----------------
 
         // val jdbcOptions = getJdbcOptions(queryString)
-        val jdbcOptions = getJdbcOptions("select database()")
+        val jdbcOptions = getJdbcOptions("select * from shipping_package_address limit 1")
         val rawDataframe = sparkSession.read
                 .format("jdbc")
                 .options(jdbcOptions)
