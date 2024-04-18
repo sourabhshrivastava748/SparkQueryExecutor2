@@ -11,6 +11,7 @@ object QueryExecutor {
           | SELECT turbo_mobile, pincode, count(distinct(tenant_code)) as distinct_tenants
           | FROM raw_dataframe_view
           | GROUP BY turbo_mobile, pincode
+          | HAVING distinct_tenants = 1
           |""".stripMargin
     }
 
@@ -61,8 +62,8 @@ object QueryExecutor {
 
         // Create temp view and apply transformation
         rawDataframe.createOrReplaceTempView("raw_dataframe_view")
-        val filterQuery = getTransformationQuery()
-        val output = sparkSession.sql(filterQuery)
+        val transformQuery = getTransformationQuery()
+        val output = sparkSession.sql(transformQuery)
         output.show(false)
 
 
