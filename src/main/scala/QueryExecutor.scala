@@ -46,11 +46,9 @@ object QueryExecutor {
         // Show dataframe unique mobile
         // unifillDF.show(false)
 
-        val unifillDfSample = unifillDF.limit(100)
-        unifillDfSample.show(100, false)
+        val unifillDfSample = unifillDF.limit(100).collect().mkString(",")
+        print("unifillDfSample: " + unifillDfSample)
 
-        // Transfer file
-        // Read data
         // Execute query for small set
         // Full execution
 
