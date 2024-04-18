@@ -6,10 +6,11 @@ object QueryExecutor {
     val log = LogManager.getLogger(this.getClass.getName)
     val sparkSession = SessionManager.createSession()
 
-    def getFilterQuery(): String = {
+    def getTransformationQuery(): String = {
         """
-          | SELECT count(distinct(mobile))
+          | SELECT turbo_mobile, pincode, count(distinct(tenant_code)) as distinct_tenants
           | FROM raw_dataframe_view
+          | GROUP BY turbo_mobile, pincode
           |""".stripMargin
     }
 
@@ -33,50 +34,36 @@ object QueryExecutor {
 
     def main(args: Array[String]): Unit = {
         log.info("=== Spark query executor ===")
+
+        // Read mobile numbers
         val unifillMobileNumbersFile = "/meesho/dm.csv"
         val unifillDF = sparkSession.read.options(
             Map ("header" -> "true",
                 "inferSchema" -> "false",
                 "mode" -> "failfast")
         ).csv(unifillMobileNumbersFile)
-
-        // Show dataframe unique mobile
         // unifillDF.show(false)
 
+        // Create query string
         val addQuotesUdf = udf(StringUtils.addQuotes)
         val unifillDfSample = unifillDF.limit(100)
                 .select(addQuotesUdf(col("mobile")).as("mobile"))
                 .collect().mkString(",").replaceAll("[\\[\\]]","")
-
-        println()
-        println("unifillDfSample: " + unifillDfSample)
         val queryString = query(unifillDfSample)
-        println()
         println("queryString: " + queryString)
+
         // Execute query for small set
-
-        //-----------------
-
-        // val jdbcOptions = getJdbcOptions(queryString)
         val jdbcOptions = getJdbcOptions(queryString)
         val rawDataframe = sparkSession.read
                 .format("jdbc")
                 .options(jdbcOptions)
                 .load()
 
-        rawDataframe.show()
-//
-//        println("rawDataframe.count(): " + rawDataframe.count())
-//        rawDataframe.show()
-
-        // Create temp view
-//        rawDataframe.createOrReplaceTempView("raw_dataframe_view")
-//        // Create dataframe from filter query
-//        val filterQuery = getFilterQuery()
-//        val output = sparkSession.sql("select * from raw_dataframe_view")
-//        output.show(false)
-
-        // Full execution
+        // Create temp view and apply transformation
+        rawDataframe.createOrReplaceTempView("raw_dataframe_view")
+        val filterQuery = getTransformationQuery()
+        val output = sparkSession.sql(filterQuery)
+        output.show(false)
 
 
 //        val fetchQuery = getFetchQuery()
