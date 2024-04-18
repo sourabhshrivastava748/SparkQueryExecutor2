@@ -46,8 +46,8 @@ object QueryExecutor {
 
         // Show dataframe unique mobile
         // unifillDF.show(false)
-        val addQuotes = (inputString: String) => { "'" + inputString + "'" }
-        val addQuotesUdf = udf(addQuotes)
+
+        val addQuotesUdf = udf(StringUtils.addQuotes)
         val unifillDfSample = unifillDF.limit(100)
                 .select(addQuotesUdf(col("mobile")).as("mobile"))
                 .collect().mkString(",").replaceAll("[\\[\\]]","")
