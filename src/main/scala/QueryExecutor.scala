@@ -35,6 +35,19 @@ object QueryExecutor {
         )
     }
 
+    def query(mobileList: String): String = {
+        """
+          | select count(*) from (
+          |	    select turbo_mobile, pincode, count(*) as total_address, count(distinct(tenant_code)) as distinct_tenants
+          |	    from shipping_package_address where
+          |	    turbo_mobile in ( """.stripMargin + mobileList +
+        """
+          |	    group by turbo_mobile, pincode
+          |	    having distinct_tenants = 1
+          |) t;
+          |""".stripMargin
+    }
+
     def main(args: Array[String]): Unit = {
         log.info("=== Spark query executor ===")
         val unifillMobileNumbersFile = "/meesho/dm.csv"
@@ -52,10 +65,15 @@ object QueryExecutor {
                 .select(addQuotesUdf(col("mobile")).as("mobile"))
                 .collect().mkString(",").replaceAll("[\\[\\]]","")
 
-        print("unifillDfSample: " + unifillDfSample)
-
-
+        println()
+        println("unifillDfSample: " + unifillDfSample)
+        val queryString = query(unifillDfSample)
+        println()
+        println("queryString: " + queryString)
         // Execute query for small set
+
+
+
         // Full execution
 
 
