@@ -46,8 +46,9 @@ object QueryExecutor {
         // Show dataframe unique mobile
         // unifillDF.show(false)
 
-        val unifillDfSample = unifillDF.limit(100).collect().mkString(",")
+        val unifillDfSample = unifillDF.limit(100).collect().mkString(",").replaceAll("[\\[\\]]","")
         print("unifillDfSample: " + unifillDfSample)
+
 
         // Execute query for small set
         // Full execution
