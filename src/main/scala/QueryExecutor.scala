@@ -44,10 +44,10 @@ object QueryExecutor {
         ).csv(unifillMobileNumbersFile)
 
         // Show dataframe unique mobile
-        unifillDF.show(false)
+        // unifillDF.show(false)
 
-
-
+        val unifillDfSample = unifillDF.limit(100)
+        unifillDfSample.show(100, false)
 
         // Transfer file
         // Read data

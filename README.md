@@ -9,5 +9,5 @@
         --properties-file src/main/resources/application.properties \
         --jars $(echo dependencies/*.jar | tr ' ' ',') \
         --deploy-mode cluster \
-        target/scala-2.12/sparkqueryexecutor*.jar
+        target/scala-2.12/sparkqueryexecutor2*.jar
 
