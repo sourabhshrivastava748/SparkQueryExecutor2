@@ -6,14 +6,6 @@ object QueryExecutor {
     val log = LogManager.getLogger(this.getClass.getName)
     val sparkSession = SessionManager.createSession()
 
-    def getFetchQuery(): String = {
-        """
-          | SELECT mobile
-          | FROM shipping_package_address
-          | WHERE uniware_sp_created >= "2024-01-01"
-          |""".stripMargin
-    }
-
     def getFilterQuery(): String = {
         """
           | SELECT count(distinct(mobile))
@@ -69,9 +61,10 @@ object QueryExecutor {
         println("queryString: " + queryString)
         // Execute query for small set
 
+        //-----------------
 
         // val jdbcOptions = getJdbcOptions(queryString)
-        val jdbcOptions = getJdbcOptions("show tables")
+        val jdbcOptions = getJdbcOptions("select database()")
         val rawDataframe = sparkSession.read
                 .format("jdbc")
                 .options(jdbcOptions)
