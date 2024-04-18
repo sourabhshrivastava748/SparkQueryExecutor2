@@ -37,14 +37,11 @@ object QueryExecutor {
 
     def query(mobileList: String): String = {
         """
-          | select count(*) from (
-          |	    select turbo_mobile, pincode, count(*) as total_address, count(distinct(tenant_code)) as distinct_tenants
-          |	    from shipping_package_address where
-          |	    turbo_mobile in ( """.stripMargin + mobileList +
+          | select turbo_mobile, pincode, tenant_code
+          | from shipping_package_address where
+          |	turbo_mobile in ( """.stripMargin + mobileList +
         """
-          |	    group by turbo_mobile, pincode
-          |	    having distinct_tenants = 1
-          |) t;
+          |	);
           |""".stripMargin
     }
 
@@ -72,7 +69,17 @@ object QueryExecutor {
         println("queryString: " + queryString)
         // Execute query for small set
 
+        val outputDf = sparkSession.sql(queryString)
+        outputDf.show(false)
 
+        val jdbcOptions = getJdbcOptions(queryString)
+        val rawDataframe = sparkSession.read
+                .format("jdbc")
+                .options(jdbcOptions)
+                .load()
+
+        println("rawDataframe.count(): " + rawDataframe.count())
+        rawDataframe.show()
 
         // Full execution
 
