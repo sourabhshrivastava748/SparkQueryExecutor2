@@ -28,13 +28,7 @@ object QueryExecutor {
     }
 
     def query(mobileList: String): String = {
-        """
-          | select turbo_mobile, pincode, tenant_code
-          | from shipping_package_address where
-          |	turbo_mobile in ( """.stripMargin + mobileList +
-        """
-          |	);
-          |""".stripMargin
+        "select turbo_mobile, pincode, tenant_code from shipping_package_address where turbo_mobile in (" + mobileList + ")"
     }
 
     def main(args: Array[String]): Unit = {
@@ -64,7 +58,7 @@ object QueryExecutor {
         //-----------------
 
         // val jdbcOptions = getJdbcOptions(queryString)
-        val jdbcOptions = getJdbcOptions("select * from shipping_package_address limit 1")
+        val jdbcOptions = getJdbcOptions(queryString)
         val rawDataframe = sparkSession.read
                 .format("jdbc")
                 .options(jdbcOptions)
