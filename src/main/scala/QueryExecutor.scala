@@ -1,4 +1,5 @@
 import org.apache.log4j.LogManager
+import org.apache.spark.sql.functions.{col, udf}
 import session.SessionManager
 
 object QueryExecutor {
@@ -34,6 +35,8 @@ object QueryExecutor {
         )
     }
 
+    val addQuotes = (inputString: String) => { "'" + inputString + "'" }
+
     def main(args: Array[String]): Unit = {
         log.info("=== Spark query executor ===")
         val unifillMobileNumbersFile = "/meesho/dm.csv"
@@ -46,7 +49,11 @@ object QueryExecutor {
         // Show dataframe unique mobile
         // unifillDF.show(false)
 
-        val unifillDfSample = unifillDF.limit(100).collect().mkString(",").replaceAll("[\\[\\]]","")
+        val addQuotesUdf = udf(addQuotes)
+        val unifillDfSample = unifillDF.limit(100)
+                .select(addQuotesUdf(col("mobile")).as("mobile"))
+                .collect().mkString(",").replaceAll("[\\[\\]]","")
+
         print("unifillDfSample: " + unifillDfSample)
 
 
