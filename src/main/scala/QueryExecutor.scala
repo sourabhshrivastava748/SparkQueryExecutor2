@@ -81,6 +81,13 @@ object QueryExecutor {
         println("rawDataframe.count(): " + rawDataframe.count())
         rawDataframe.show()
 
+        // Create temp view
+        rawDataframe.createOrReplaceTempView("raw_dataframe_view")
+        // Create dataframe from filter query
+        val filterQuery = getFilterQuery()
+        val output = sparkSession.sql("select * from raw_dataframe_view")
+        output.show(false)
+
         // Full execution
 
 
@@ -94,10 +101,6 @@ object QueryExecutor {
 //                .options(jdbcOptions)
 //                .load()
 //
-//        // Create temp view
-//        rawDataframe.createOrReplaceTempView("raw_dataframe_view")
-//        // Create dataframe from filter query
-//        val outputDf = sparkSession.sql(filterQuery)
-//        outputDf.show(false)
+
     }
 }
