@@ -6,12 +6,21 @@ object QueryExecutor {
     val log = LogManager.getLogger(this.getClass.getName)
     val sparkSession = SessionManager.createSession()
 
-    def getTransformationQuery(): String = {
+    def getTransformationQuery1(): String = {
         """
           | SELECT turbo_mobile, pincode, count(distinct(tenant_code)) as distinct_tenants
           | FROM raw_dataframe_view
           | GROUP BY turbo_mobile, pincode
           | HAVING distinct_tenants = 1
+          |""".stripMargin
+    }
+
+    def getTransformationQuery2(): String = {
+        """
+          | SELECT turbo_mobile, pincode, count(distinct(tenant_code)) as distinct_tenants
+          | FROM raw_dataframe_view
+          | GROUP BY turbo_mobile, pincode
+          | HAVING distinct_tenants > 1
           |""".stripMargin
     }
 
@@ -62,21 +71,10 @@ object QueryExecutor {
 
         // Create temp view and apply transformation
         rawDataframe.createOrReplaceTempView("raw_dataframe_view")
-        val transformQuery = getTransformationQuery()
-        val output = sparkSession.sql(transformQuery)
-        output.show(false)
-
-
-//        val fetchQuery = getFetchQuery()
-//        val jdbcOptions = getJdbcOptions(fetchQuery)
-//        val filterQuery = getFilterQuery()
-//
-//        // Read into dataframe
-//        val rawDataframe = sparkSession.read
-//                .format("jdbc")
-//                .options(jdbcOptions)
-//                .load()
-//
+        val output1 = sparkSession.sql(getTransformationQuery1())
+        val output2 = sparkSession.sql(getTransformationQuery2())
+        println("Address with one tenant: " + output1.count())
+        println("Address with greater than one tenant: " + output2.count())
 
     }
 }
