@@ -42,6 +42,12 @@ object QueryExecutor {
         "select turbo_mobile, pincode, tenant_code from shipping_package_address where turbo_mobile in (" + mobileList + ")"
     }
 
+    def queryNew(): String = {
+        "select spa.turbo_mobile, spa.pincode, spa.tenant_code " +
+                "from shipping_package_address spa " +
+                "join temp_numbers_2023 temp on spa.turbo_mobile = temp.turbo_mobile"
+    }
+
     def main(args: Array[String]): Unit = {
         log.info("=== Spark query executor ===")
 
@@ -59,7 +65,8 @@ object QueryExecutor {
         val unifillDfSample = unifillDF
                 .select(addQuotesUdf(col("mobile")).as("mobile"))
                 .collect().mkString(",").replaceAll("[\\[\\]]","")
-        val queryString = query(unifillDfSample)
+        // val queryString = query(unifillDfSample)
+        val queryString = queryNew()
         println("queryString: " + queryString)
 
         // Execute query for small set
