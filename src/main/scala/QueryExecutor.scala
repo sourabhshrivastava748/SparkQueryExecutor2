@@ -34,7 +34,8 @@ object QueryExecutor {
             "header" -> "true",
             "inferSchema" -> "true",
             "mode" -> "failfast",
-            "fetchSize" -> "50000"
+            "fetchSize" -> "50000",
+            "numPartitions" -> "20"
         )
     }
 
