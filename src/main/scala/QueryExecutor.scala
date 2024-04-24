@@ -49,9 +49,7 @@ object QueryExecutor {
                 "join temp_numbers_2023 temp on spa.turbo_mobile = temp.turbo_mobile"
     }
 
-    def main(args: Array[String]): Unit = {
-        log.info("=== Spark query executor ===")
-
+    def temp() = {
         // Read mobile numbers
         val unifillMobileNumbersFile = "/meesho/dm.csv"
         val unifillDF = sparkSession.read.options(
@@ -64,8 +62,8 @@ object QueryExecutor {
         // Create query string
         val addQuotesUdf = udf(StringUtils.addQuotes)
         val unifillDfSample = unifillDF
-                .select(addQuotesUdf(col("mobile")).as("mobile"))
-                .collect().mkString(",").replaceAll("[\\[\\]]","")
+          .select(addQuotesUdf(col("mobile")).as("mobile"))
+          .collect().mkString(",").replaceAll("[\\[\\]]","")
         // val queryString = query(unifillDfSample)
         val queryString = queryNew()
         println("queryString: " + queryString)
@@ -73,9 +71,9 @@ object QueryExecutor {
         // Execute query for small set
         val jdbcOptions = getJdbcOptions(queryString)
         val rawDataframe = sparkSession.read
-                .format("jdbc")
-                .options(jdbcOptions)
-                .load()
+          .format("jdbc")
+          .options(jdbcOptions)
+          .load()
 
         // Create temp view and apply transformation
         rawDataframe.createOrReplaceTempView("raw_dataframe_view")
@@ -83,6 +81,42 @@ object QueryExecutor {
         val output2 = sparkSession.sql(getTransformationQuery2())
         println("Addresses with one tenant: " + output1.count())
         println("Addresses with greater than one tenant: " + output2.count())
-
     }
+
+
+    private def getJdbcOptionsParallelRead(dbtable: String, lowerBound: String, upperBound: String)= {
+        Map(
+            "driver" -> "com.mysql.cj.jdbc.Driver",
+            "url" -> "jdbc:mysql://db.address.unicommerce.infra:3306/turbo",
+            "user" -> "developer",
+            "password" -> "DevelopeR@4#",
+            "header" -> "true",
+            "inferSchema" -> "true",
+            "mode" -> "failfast",
+            "dbtable" -> dbtable,
+            "numPartitions" -> "8",
+            "lowerBound" -> lowerBound,
+            "upperBound" -> upperBound,
+            "fetchSize" -> "50000"
+        )
+    }
+
+
+    def main(args: Array[String]): Unit = {
+        log.info("=== Spark query executor ===")
+
+        val dbtable = "address_lookup_trace"
+        val lowerBound = "0"
+        val upperBound = "13842930"
+
+        val jdbcOptions = getJdbcOptionsParallelRead(dbtable, lowerBound, upperBound)
+        val rawDataframe = sparkSession.read
+          .format("jdbc")
+          .options(jdbcOptions)
+          .load()
+
+        rawDataframe.show(false)
+    }
+
+
 }
