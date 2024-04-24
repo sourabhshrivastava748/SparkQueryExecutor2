@@ -106,10 +106,10 @@ object QueryExecutor {
     def main(args: Array[String]): Unit = {
         log.info("=== Spark query executor ===")
 
-        val dbtable = "address_lookup_trace"
+        val dbtable = "shipping_package_address"
         val partitionColumn = "id"
         val lowerBound = "0"
-        val upperBound = "13842930"
+        val upperBound = "332695975"
 
         val jdbcOptions = getJdbcOptionsParallelRead(dbtable, partitionColumn, lowerBound, upperBound)
         val rawDataframe = sparkSession.read
@@ -118,20 +118,20 @@ object QueryExecutor {
           .load()
 
         rawDataframe.show(false)
-        println("Dataframe partitions: " + rawDataframe.rdd.getNumPartitions)
+//        println("Dataframe partitions: " + rawDataframe.rdd.getNumPartitions)
         println("Dataframe size: " + rawDataframe.count())
 
         // Create a temporary view from dataframe
-        rawDataframe.createOrReplaceTempView("raw_data_frame_view")
-
-        val sqlOutputDf = sparkSession.sql(
-            """
-              | select count(*)
-              | from raw_data_frame_view
-              | where tenant_code = 'simpl'
-              |""".stripMargin)
-        
-        sqlOutputDf.show(false);
+//        rawDataframe.createOrReplaceTempView("raw_data_frame_view")
+//
+//        val sqlOutputDf = sparkSession.sql(
+//            """
+//              | select count(*)
+//              | from raw_data_frame_view
+//              | where tenant_code = 'simpl'
+//              |""".stripMargin)
+//
+//        sqlOutputDf.show(false);
     }
 
 
