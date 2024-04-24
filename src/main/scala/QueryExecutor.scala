@@ -118,6 +118,20 @@ object QueryExecutor {
           .load()
 
         rawDataframe.show(false)
+        println("Dataframe partitions: " + rawDataframe.rdd.getNumPartitions)
+        println("Dataframe size: " + rawDataframe.count())
+
+        // Create a temporary view from dataframe
+        rawDataframe.createOrReplaceTempView("raw_data_frame_view")
+
+        val sqlOutputDf = sparkSession.sql(
+            """
+              | select count(*)
+              | from raw_data_frame_view
+              | where tenant_code = 'simpl'
+              |""".stripMargin)
+        
+        sqlOutputDf.show(false);
     }
 
 
