@@ -84,7 +84,7 @@ object QueryExecutor {
     }
 
 
-    private def getJdbcOptionsParallelRead(dbtable: String, lowerBound: String, upperBound: String)= {
+    private def getJdbcOptionsParallelRead(dbtable: String, partitionColumn: String, lowerBound: String, upperBound: String)= {
         Map(
             "driver" -> "com.mysql.cj.jdbc.Driver",
             "url" -> "jdbc:mysql://db.address.unicommerce.infra:3306/turbo",
@@ -95,6 +95,7 @@ object QueryExecutor {
             "mode" -> "failfast",
             "dbtable" -> dbtable,
             "numPartitions" -> "8",
+            "partitionColumn" -> partitionColumn,
             "lowerBound" -> lowerBound,
             "upperBound" -> upperBound,
             "fetchSize" -> "50000"
@@ -106,10 +107,11 @@ object QueryExecutor {
         log.info("=== Spark query executor ===")
 
         val dbtable = "address_lookup_trace"
+        val partitionColumn = "id"
         val lowerBound = "0"
         val upperBound = "13842930"
 
-        val jdbcOptions = getJdbcOptionsParallelRead(dbtable, lowerBound, upperBound)
+        val jdbcOptions = getJdbcOptionsParallelRead(dbtable, partitionColumn, lowerBound, upperBound)
         val rawDataframe = sparkSession.read
           .format("jdbc")
           .options(jdbcOptions)
