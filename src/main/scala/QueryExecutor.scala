@@ -84,7 +84,7 @@ object QueryExecutor {
     }
 
 
-    private def getJdbcOptionsParallelRead(dbtable: String, partitionColumn: String, lowerBound: String, upperBound: String)= {
+    private def getJdbcOptionsParallelRead(dbtable: String, partitionColumn: String, numPartitions: String, lowerBound: String, upperBound: String)= {
         Map(
             "driver" -> "com.mysql.cj.jdbc.Driver",
             "url" -> "jdbc:mysql://db.address.unicommerce.infra:3306/turbo",
@@ -94,8 +94,8 @@ object QueryExecutor {
             "inferSchema" -> "true",
             "mode" -> "failfast",
             "dbtable" -> dbtable,
-            "numPartitions" -> "8",
             "partitionColumn" -> partitionColumn,
+            "numPartitions" -> numPartitions,
             "lowerBound" -> lowerBound,
             "upperBound" -> upperBound,
             "fetchSize" -> "50000"
@@ -108,16 +108,17 @@ object QueryExecutor {
 
         val dbtable = "shipping_package_address"
         val partitionColumn = "id"
+        val numPartitions = "40"
         val lowerBound = "0"
         val upperBound = "332695975"
 
-        val jdbcOptions = getJdbcOptionsParallelRead(dbtable, partitionColumn, lowerBound, upperBound)
+        val jdbcOptions = getJdbcOptionsParallelRead(dbtable, partitionColumn, numPartitions, lowerBound, upperBound)
         val rawDataframe = sparkSession.read
           .format("jdbc")
           .options(jdbcOptions)
           .load()
 
-        rawDataframe.show(false)
+//        rawDataframe.show(false)
 //        println("Dataframe partitions: " + rawDataframe.rdd.getNumPartitions)
         println("Dataframe size: " + rawDataframe.count())
 
