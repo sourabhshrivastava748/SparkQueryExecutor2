@@ -120,7 +120,15 @@ object QueryExecutor {
 
 //        rawDataframe.show(false)
 //        println("Dataframe partitions: " + rawDataframe.rdd.getNumPartitions)
-        println("Dataframe size: " + rawDataframe.count())
+//        println("Dataframe size: " + rawDataframe.count())
+
+        val outputpath = "/unifill-data/spa-29-march-2024.csv"
+
+        rawDataframe.write
+          .format("csv")
+          .option("header", "true")
+          .mode("overwrite")
+          .save(outputpath)
 
         // Create a temporary view from dataframe
 //        rawDataframe.createOrReplaceTempView("raw_data_frame_view")
