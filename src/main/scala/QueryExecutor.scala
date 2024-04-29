@@ -131,17 +131,29 @@ object QueryExecutor {
           .save(outputpath)
 
         // Create a temporary view from dataframe
-//        rawDataframe.createOrReplaceTempView("raw_data_frame_view")
-//
-//        val sqlOutputDf = sparkSession.sql(
-//            """
-//              | select count(*)
-//              | from raw_data_frame_view
-//              | where tenant_code = 'simpl'
-//              |""".stripMargin)
-//
-//        sqlOutputDf.show(false);
+        rawDataframe.createOrReplaceTempView("raw_data_frame_view")
+
+        val sqlOutputDf1 = sparkSession.sql(
+            """
+              | select count(*) as address_more_than_one_tenant from (
+              |     select turbo_mobile, pincode, count(distinct(tenant_code)) as tenant_count
+              |     from raw_data_frame_view
+              |     group by turbo_mobile, pincode
+              |     having tenant_count > 1) temp
+              |""".stripMargin)
+
+        sqlOutputDf1.show(false);
+
+        val sqlOutputDf2 = sparkSession.sql(
+            """
+              | select count(*) as address_single_tenant from (
+              |     select turbo_mobile, pincode, count(distinct(tenant_code)) as tenant_count
+              |     from raw_data_frame_view
+              |     group by turbo_mobile, pincode
+              |     having tenant_count = 1) temp
+              |""".stripMargin)
+
+        sqlOutputDf2.show(false);
     }
-
-
+    
 }
