@@ -133,27 +133,36 @@ object QueryExecutor {
         // Create a temporary view from dataframe
         rawDataframe.createOrReplaceTempView("raw_data_frame_view")
 
-        val sqlOutputDf1 = sparkSession.sql(
+//        val sqlOutputDf1 = sparkSession.sql(
+//            """
+//              | select count(*) as address_more_than_one_tenant from (
+//              |     select turbo_mobile, pincode, count(distinct(tenant_code)) as tenant_count
+//              |     from raw_data_frame_view
+//              |     group by turbo_mobile, pincode
+//              |     having tenant_count > 1) temp
+//              |""".stripMargin)
+//
+//        sqlOutputDf1.show(false);
+//
+//        val sqlOutputDf2 = sparkSession.sql(
+//            """
+//              | select count(*) as address_single_tenant from (
+//              |     select turbo_mobile, pincode, count(distinct(tenant_code)) as tenant_count
+//              |     from raw_data_frame_view
+//              |     group by turbo_mobile, pincode
+//              |     having tenant_count = 1) temp
+//              |""".stripMargin)
+//
+//        sqlOutputDf2.show(false);
+
+        val sqlOutputDf3 = sparkSession.sql(
             """
-              | select count(*) as address_more_than_one_tenant from (
-              |     select turbo_mobile, pincode, count(distinct(tenant_code)) as tenant_count
-              |     from raw_data_frame_view
-              |     group by turbo_mobile, pincode
-              |     having tenant_count > 1) temp
+              | select tenant_code, count(*) as address_count
+              | from raw_data_frame_view group by tenant_code
+              | order by address_count desc
               |""".stripMargin)
 
-        sqlOutputDf1.show(false);
-
-        val sqlOutputDf2 = sparkSession.sql(
-            """
-              | select count(*) as address_single_tenant from (
-              |     select turbo_mobile, pincode, count(distinct(tenant_code)) as tenant_count
-              |     from raw_data_frame_view
-              |     group by turbo_mobile, pincode
-              |     having tenant_count = 1) temp
-              |""".stripMargin)
-
-        sqlOutputDf2.show(false);
+        sqlOutputDf3.show(100, false);
     }
 
 }
