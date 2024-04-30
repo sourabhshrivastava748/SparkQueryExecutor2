@@ -223,7 +223,7 @@ object QueryExecutor {
         val sqlOutputDf7 = sparkSession.sql(
             """
               | select tenant_code, count(*) as address_count from(
-              |	    select turbo_mobile, pincode, count(distinct(tenant_code)) as tenant_count, min(tenant_code)
+              |	    select turbo_mobile, pincode, count(distinct(tenant_code)) as tenant_count, min(tenant_code) as tenant_code
               |	    from raw_data_frame_view
               |	    where uniware_sp_created >= "2021-01-01" and
               |	    turbo_mobile != ""
