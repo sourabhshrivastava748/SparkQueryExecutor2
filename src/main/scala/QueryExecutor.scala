@@ -134,79 +134,79 @@ object QueryExecutor {
         rawDataframe.createOrReplaceTempView("raw_data_frame_view")
 
         //  -------------------   Last 1 yr  -----------------------
-        val sqlOutputDf1 = sparkSession.sql(
-            """
-              | select count(*) as address_more_than_one_tenant_2023_24 from (
-              |     select turbo_mobile, pincode, count(distinct(tenant_code)) as tenant_count
-              |     from raw_data_frame_view
-              |     where uniware_sp_created >= "2023-01-01"
-              |     group by turbo_mobile, pincode
-              |     having tenant_count > 1) temp
-              |""".stripMargin)
-
-        sqlOutputDf1.show(false);
-
-        val sqlOutputDf2 = sparkSession.sql(
-            """
-              | select count(*) as address_single_tenant_2023_24 from (
-              |     select turbo_mobile, pincode, count(distinct(tenant_code)) as tenant_count
-              |     from raw_data_frame_view
-              |     where uniware_sp_created >= "2023-01-01"
-              |     group by turbo_mobile, pincode
-              |     having tenant_count = 1) temp
-              |""".stripMargin)
-
-        sqlOutputDf2.show(false);
-
-        //  -------------------   Last 2 yr  -----------------------
-        val sqlOutputDf3 = sparkSession.sql(
-            """
-              | select count(*) as address_more_than_one_tenant_2022_24 from (
-              |     select turbo_mobile, pincode, count(distinct(tenant_code)) as tenant_count
-              |     from raw_data_frame_view
-              |     where uniware_sp_created >= "2022-01-01"
-              |     group by turbo_mobile, pincode
-              |     having tenant_count > 1) temp
-              |""".stripMargin)
-
-        sqlOutputDf3.show(false);
-
-        val sqlOutputDf4 = sparkSession.sql(
-            """
-              | select count(*) as address_single_tenant_2022_24 from (
-              |     select turbo_mobile, pincode, count(distinct(tenant_code)) as tenant_count
-              |     from raw_data_frame_view
-              |     where uniware_sp_created >= "2022-01-01"
-              |     group by turbo_mobile, pincode
-              |     having tenant_count = 1) temp
-              |""".stripMargin)
-
-        sqlOutputDf4.show(false);
-
-        //  -------------------   Last 3 yr  -----------------------
-        val sqlOutputDf5 = sparkSession.sql(
-            """
-              | select count(*) as address_more_than_one_tenant_2021_24 from (
-              |     select turbo_mobile, pincode, count(distinct(tenant_code)) as tenant_count
-              |     from raw_data_frame_view
-              |     where uniware_sp_created >= "2021-01-01"
-              |     group by turbo_mobile, pincode
-              |     having tenant_count > 1) temp
-              |""".stripMargin)
-
-        sqlOutputDf5.show(false);
-
-        val sqlOutputDf6 = sparkSession.sql(
-            """
-              | select count(*) as address_single_tenant_2021_24 from (
-              |     select turbo_mobile, pincode, count(distinct(tenant_code)) as tenant_count
-              |     from raw_data_frame_view
-              |     where uniware_sp_created >= "2021-01-01"
-              |     group by turbo_mobile, pincode
-              |     having tenant_count = 1) temp
-              |""".stripMargin)
-
-        sqlOutputDf6.show(false);
+//        val sqlOutputDf1 = sparkSession.sql(
+//            """
+//              | select count(*) as address_more_than_one_tenant_2023_24 from (
+//              |     select turbo_mobile, pincode, count(distinct(tenant_code)) as tenant_count
+//              |     from raw_data_frame_view
+//              |     where uniware_sp_created >= "2023-01-01"
+//              |     group by turbo_mobile, pincode
+//              |     having tenant_count > 1) temp
+//              |""".stripMargin)
+//
+//        sqlOutputDf1.show(false);
+//
+//        val sqlOutputDf2 = sparkSession.sql(
+//            """
+//              | select count(*) as address_single_tenant_2023_24 from (
+//              |     select turbo_mobile, pincode, count(distinct(tenant_code)) as tenant_count
+//              |     from raw_data_frame_view
+//              |     where uniware_sp_created >= "2023-01-01"
+//              |     group by turbo_mobile, pincode
+//              |     having tenant_count = 1) temp
+//              |""".stripMargin)
+//
+//        sqlOutputDf2.show(false);
+//
+//        //  -------------------   Last 2 yr  -----------------------
+//        val sqlOutputDf3 = sparkSession.sql(
+//            """
+//              | select count(*) as address_more_than_one_tenant_2022_24 from (
+//              |     select turbo_mobile, pincode, count(distinct(tenant_code)) as tenant_count
+//              |     from raw_data_frame_view
+//              |     where uniware_sp_created >= "2022-01-01"
+//              |     group by turbo_mobile, pincode
+//              |     having tenant_count > 1) temp
+//              |""".stripMargin)
+//
+//        sqlOutputDf3.show(false);
+//
+//        val sqlOutputDf4 = sparkSession.sql(
+//            """
+//              | select count(*) as address_single_tenant_2022_24 from (
+//              |     select turbo_mobile, pincode, count(distinct(tenant_code)) as tenant_count
+//              |     from raw_data_frame_view
+//              |     where uniware_sp_created >= "2022-01-01"
+//              |     group by turbo_mobile, pincode
+//              |     having tenant_count = 1) temp
+//              |""".stripMargin)
+//
+//        sqlOutputDf4.show(false);
+//
+//        //  -------------------   Last 3 yr  -----------------------
+//        val sqlOutputDf5 = sparkSession.sql(
+//            """
+//              | select count(*) as address_more_than_one_tenant_2021_24 from (
+//              |     select turbo_mobile, pincode, count(distinct(tenant_code)) as tenant_count
+//              |     from raw_data_frame_view
+//              |     where uniware_sp_created >= "2021-01-01"
+//              |     group by turbo_mobile, pincode
+//              |     having tenant_count > 1) temp
+//              |""".stripMargin)
+//
+//        sqlOutputDf5.show(false);
+//
+//        val sqlOutputDf6 = sparkSession.sql(
+//            """
+//              | select count(*) as address_single_tenant_2021_24 from (
+//              |     select turbo_mobile, pincode, count(distinct(tenant_code)) as tenant_count
+//              |     from raw_data_frame_view
+//              |     where uniware_sp_created >= "2021-01-01"
+//              |     group by turbo_mobile, pincode
+//              |     having tenant_count = 1) temp
+//              |""".stripMargin)
+//
+//        sqlOutputDf6.show(false);
 
 
 
@@ -218,6 +218,22 @@ object QueryExecutor {
 //              |""".stripMargin)
 //
 //        sqlOutputDf3.show(100, false);
+
+
+        val sqlOutputDf7 = sparkSession.sql(
+            """
+              | select tenant_code, count(*) as address_count from(
+              |	    select turbo_mobile, pincode, count(distinct(tenant_code)) as tenant_count, tenant_code
+              |	    from raw_data_frame_view
+              |	    where uniware_sp_created >= "2021-01-01" and
+              |	    turbo_mobile != ""
+              |	    group by turbo_mobile, pincode
+              |	    having tenant_count = 1) temp
+              | group by tenant_code
+              | order by address_count desc limit 100;
+              |""".stripMargin)
+
+        sqlOutputDf7.show(false);
     }
 
 }
